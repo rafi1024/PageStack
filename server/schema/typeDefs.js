@@ -7,7 +7,7 @@ const typeDefs = gql`
     picture: String!
     biography: String
     born_date: String
-    books: [Book!]
+    books: [Book!]!
   }
 
   type Book {
@@ -19,13 +19,27 @@ const typeDefs = gql`
     author: Author!
   }
 
-  type Query {
+  type PaginatedBooks {
     books: [Book!]!
+    total: Int!
+    hasMore: Boolean!
+  }
+
+  type PaginatedAuthors {
     authors: [Author!]!
+    total: Int!
+    hasMore: Boolean!
+  }
+
+  type Query {
+    books(page: Int, limit: Int, authorId: ID): PaginatedBooks!
+    authors(page: Int, limit: Int): PaginatedAuthors!
+    book(id: ID!): Book
+    author(id: ID!): Author
   }
 
   type Mutation {
-    createBook(title: String!, authorId: ID!, picture: String!, description: String, published_date: String): Book!
+    createBook(title: String!, picture: String!, description: String, published_date: String, authorId: ID!): Book!
     createAuthor(name: String!, picture: String!, biography: String, born_date: String): Author!
   }
 `;

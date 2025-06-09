@@ -1,18 +1,37 @@
 const { Book, Author } = require('../models');
 
-const getAllBooks = async () => {
-  return await Book.findAll({ include: Author });
+const getAllBooks = async (page = 1, limit = 10, authorId = null) => {
+  const offset = (page - 1) * limit;
+  
+  const whereClause = authorId ? { AuthorId: authorId } : {};
+  
+  const { count, rows: books } = await Book.findAndCountAll({
+    where: whereClause,
+    include: Author,
+    limit,
+    offset,
+    order: [['createdAt', 'DESC']]
+  });
+
+  return {
+    books,
+    total: count,
+    hasMore: offset + books.length < count
+  };
 };
 
-const createBook = async ({ title, authorId, picture, description, published_date }) => {
-  const book = await Book.create({ 
+const getBookById = async (id) => {
+  return await Book.findByPk(id, { include: Author });
+};
+
+const createBook = async ({ title, picture, description, published_date, authorId }) => {
+  return await Book.create({ 
     title, 
-    AuthorId: authorId, 
     picture,
     description,
-    published_date 
+    published_date,
+    AuthorId: authorId 
   });
-  return await Book.findByPk(book.id, { include: Author });
 };
 
-module.exports = { getAllBooks, createBook }; 
+module.exports = { getAllBooks, getBookById, createBook }; 
