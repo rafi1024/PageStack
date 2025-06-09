@@ -8,6 +8,8 @@ const GET_BOOKS = gql`
       id
       title
       picture
+      description
+      published_date
       author {
         id
         name
@@ -33,6 +35,8 @@ export default function BooksPage() {
             <tr>
               <th className="py-2 px-4 border-b text-left text-gray-800">Cover</th>
               <th className="py-2 px-4 border-b text-left text-gray-800">Title</th>
+              <th className="py-2 px-4 border-b text-left text-gray-800">Description</th>
+              <th className="py-2 px-4 border-b text-left text-gray-800">Published Date</th>
               <th className="py-2 px-4 border-b text-left text-gray-800">Author</th>
               <th className="py-2 px-4 border-b text-left text-gray-800">Actions</th>
             </tr>
@@ -44,6 +48,8 @@ export default function BooksPage() {
                   <img src={book.picture} alt={book.title} className="w-14 h-20 object-cover rounded shadow" />
                 </td>
                 <td className="py-2 px-4 border-b text-gray-700">{book.title}</td>
+                <td className="py-2 px-4 border-b text-gray-700 max-w-md truncate">{book.description || '-'}</td>
+                <td className="py-2 px-4 border-b text-gray-700">{book.published_date || '-'}</td>
                 <td className="py-2 px-4 border-b text-gray-700">{book.author.name}</td>
                 <td className="py-2 px-4 border-b">
                   <Link href={`/books/edit/${book.id}`} className="text-blue-600 mr-4 hover:underline">Edit</Link>

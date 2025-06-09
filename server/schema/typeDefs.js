@@ -5,6 +5,8 @@ const typeDefs = gql`
     id: ID!
     name: String!
     picture: String!
+    biography: String
+    born_date: String
     books: [Book!]
   }
 
@@ -12,6 +14,8 @@ const typeDefs = gql`
     id: ID!
     title: String!
     picture: String!
+    description: String
+    published_date: String
     author: Author!
   }
 
@@ -21,8 +25,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createBook(title: String!, authorId: ID!, picture: String!): Book!
-    createAuthor(name: String!, picture: String!): Author!
+    createBook(title: String!, authorId: ID!, picture: String!, description: String, published_date: String): Book!
+    createAuthor(name: String!, picture: String!, biography: String, born_date: String): Author!
   }
 `;
 

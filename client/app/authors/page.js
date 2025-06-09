@@ -8,6 +8,8 @@ const GET_AUTHORS = gql`
       id
       name
       picture
+      biography
+      born_date
     }
   }
 `;
@@ -28,6 +30,8 @@ export default function AuthorsPage() {
             <tr>
               <th className="py-2 px-4 border-b text-left text-gray-800">Photo</th>
               <th className="py-2 px-4 border-b text-left text-gray-800">Name</th>
+              <th className="py-2 px-4 border-b text-left text-gray-800">Biography</th>
+              <th className="py-2 px-4 border-b text-left text-gray-800">Born Date</th>
               <th className="py-2 px-4 border-b text-left text-gray-800">Actions</th>
             </tr>
           </thead>
@@ -38,6 +42,8 @@ export default function AuthorsPage() {
                   <img src={author.picture} alt={author.name} className="w-14 h-14 object-cover rounded-full shadow" />
                 </td>
                 <td className="py-2 px-4 border-b text-gray-700">{author.name}</td>
+                <td className="py-2 px-4 border-b text-gray-700 max-w-md truncate">{author.biography || '-'}</td>
+                <td className="py-2 px-4 border-b text-gray-700">{author.born_date || '-'}</td>
                 <td className="py-2 px-4 border-b">
                   <Link href={`/authors/edit/${author.id}`} className="text-blue-600 mr-4 hover:underline">Edit</Link>
                   <Link href={`/authors/delete/${author.id}`} className="text-red-600 hover:underline">Delete</Link>
