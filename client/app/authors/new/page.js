@@ -42,43 +42,60 @@ export default function NewAuthorPage() {
     <div className="container mx-auto p-8 bg-white">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Add New Author</h1>
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+        <div className="mb-4">
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            Name
+          </label>
           <input
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="text"
+            id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
+            placeholder="Enter author name"
             required
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Photo URL</label>
+        <div className="mb-4">
+          <label htmlFor="picture" className="block text-sm font-medium text-gray-700 mb-2">
+            Photo URL
+          </label>
           <input
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="text"
+            id="picture"
             value={picture}
             onChange={(e) => setPicture(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
+            placeholder="Enter photo URL"
             required
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Biography</label>
+        <div className="mb-4">
+          <label htmlFor="biography" className="block text-sm font-medium text-gray-700 mb-2">
+            Biography
+          </label>
           <textarea
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[150px]"
+            id="biography"
             value={biography}
             onChange={(e) => setBiography(e.target.value)}
-            placeholder="Enter author biography..."
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
+            placeholder="Enter author biography"
+            rows="4"
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Born Date</label>
+        <div className="mb-4">
+          <label htmlFor="bornDate" className="block text-sm font-medium text-gray-700 mb-2">
+            Born Date
+          </label>
           <input
             type="date"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="bornDate"
             value={bornDate}
             onChange={(e) => setBornDate(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
           />
         </div>
 

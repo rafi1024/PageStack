@@ -6,21 +6,20 @@ import Link from "next/link";
 
 const GET_AUTHORS = gql`
   query GetAuthors {
-    authors {
-      id
-      name
+    authors(page: 1, limit: 100) {
+      authors {
+        id
+        name
+      }
     }
   }
 `;
 
 const CREATE_BOOK = gql`
-  mutation CreateBook($title: String!, $authorId: ID!, $picture: String!, $description: String, $published_date: String) {
-    createBook(title: $title, authorId: $authorId, picture: $picture, description: $description, published_date: $published_date) {
+  mutation CreateBook($title: String!, $picture: String!, $description: String, $published_date: String, $authorId: ID!) {
+    createBook(title: $title, picture: $picture, description: $description, published_date: $published_date, authorId: $authorId) {
       id
       title
-      picture
-      description
-      published_date
     }
   }
 `;
@@ -28,108 +27,136 @@ const CREATE_BOOK = gql`
 export default function NewBookPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
-  const [authorId, setAuthorId] = useState("");
   const [picture, setPicture] = useState("");
   const [description, setDescription] = useState("");
   const [publishedDate, setPublishedDate] = useState("");
-  const { data } = useQuery(GET_AUTHORS);
+  const [authorId, setAuthorId] = useState("");
+
+  const { data: authorsData } = useQuery(GET_AUTHORS);
   const [createBook, { loading, error }] = useMutation(CREATE_BOOK, {
-    onCompleted: () => router.push("/books"),
+    onCompleted: () => {
+      router.push("/books");
+    },
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createBook({ 
-      variables: { 
-        title, 
-        authorId, 
-        picture,
-        description: description || null,
-        published_date: publishedDate || null
-      } 
-    });
+    try {
+      await createBook({
+        variables: {
+          title,
+          picture,
+          description,
+          published_date: publishedDate,
+          authorId,
+        },
+      });
+    } catch (err) {
+      console.error("Error creating book:", err);
+    }
   };
+
+  const authors = authorsData?.authors?.authors || [];
 
   return (
     <div className="container mx-auto p-8 bg-white">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">Add New Book</h1>
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+        <div className="mb-4">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+            Title
+          </label>
           <input
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            type="text"
+            id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
+            placeholder="Enter book title"
             required
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Author</label>
+        <div className="mb-4">
+          <label htmlFor="picture" className="block text-sm font-medium text-gray-700 mb-2">
+            Cover Image URL
+          </label>
+          <input
+            type="text"
+            id="picture"
+            value={picture}
+            onChange={(e) => setPicture(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
+            placeholder="Enter cover image URL"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            Description
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
+            placeholder="Enter book description"
+            rows="4"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="publishedDate" className="block text-sm font-medium text-gray-700 mb-2">
+            Published Date
+          </label>
+          <input
+            type="date"
+            id="publishedDate"
+            value={publishedDate}
+            onChange={(e) => setPublishedDate(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="authorId" className="block text-sm font-medium text-gray-700 mb-2">
+            Author
+          </label>
           <select
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="authorId"
             value={authorId}
             onChange={(e) => setAuthorId(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-gray-900 placeholder-gray-700"
             required
           >
-            <option value="">Select an author</option>
-            {data?.authors.map((author) => (
-              <option key={author.id} value={author.id}>
+            <option value="" className="text-gray-700">Select an author</option>
+            {authors.map((author) => (
+              <option key={author.id} value={author.id} className="text-gray-900">
                 {author.name}
               </option>
             ))}
           </select>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image URL</label>
-          <input
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={picture}
-            onChange={(e) => setPicture(e.target.value)}
-            required
-          />
-        </div>
+        {error && <p className="text-red-500 text-sm">{error.message}</p>}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <textarea
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Enter book description..."
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Published Date</label>
-          <input
-            type="date"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={publishedDate}
-            onChange={(e) => setPublishedDate(e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center space-x-4">
+        <div className="flex space-x-4">
           <button
             type="submit"
-            className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600 transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             disabled={loading}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition disabled:opacity-50"
           >
-            {loading ? "Adding..." : "Add Book"}
+            {loading ? "Creating..." : "Create Book"}
           </button>
-          <Link 
-            href="/books" 
-            className="text-gray-600 hover:text-gray-800 transition"
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition"
           >
             Cancel
-          </Link>
+          </button>
         </div>
-
-        {error && (
-          <p className="text-red-500 mt-2">Error: {error.message}</p>
-        )}
       </form>
     </div>
   );
